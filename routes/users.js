@@ -3,6 +3,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const utils = require('../utils');
 
 // Create User router, default export it.
 export default express.Router()
@@ -117,4 +118,26 @@ router.get('/:id/profile', (req, res) => {
             });
         });
     });
+}
+
+// Get Users own profile from JWT.
+router.get('/profile', (req, res) => {
+    const db = require('../db').get();
+
+    // Get the JWT from the Authorization header.
+    const h = req.headers['authorization'];
+    const a = authHeader && authHeader.split(' ')[1];
+
+    // Redirect the user to /:id/profile for their own profile.
+    jwt.verify(a, process.env.JWT_SECRET, (err, session) => {
+        if (err) {
+           return res.sendStatus(403);
+        }
+
+        utils.redirect(
+            `/users/:id/profile`,
+            { id: session.username },
+            res,
+        );
+    }
 }
