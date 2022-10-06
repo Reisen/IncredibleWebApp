@@ -16,5 +16,17 @@ export function get() {
         )
     `);
 
+    // A table containing messages between users.
+    db.run(`
+        CREATE TABLE IF NOT EXISTS messages (
+            username  TEXT,
+            recipient TEXT,
+            message   TEXT,
+            timestamp INTEGER,
+            FOREIGN KEY(username)  REFERENCES users(username),
+            FOREIGN KEY(recipient) REFERENCES users(username),
+        )
+    `);
+
     return db;
 }

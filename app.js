@@ -8,6 +8,12 @@ const app = express();
 app.use(express.json());
 
 /* Setup request handling / routing. */
-const userRouter = require('./routes/users');
-app.get('/',         (req, res) => res.send('Awesome App'));
-app.use('/users',    userRouter);
+app.get('/',        (req, res) => res.send('Awesome App'));
+app.use('/:router', (req, res, next) => {
+    try {
+        require(`./routes/${req.params.router}`);
+        next();
+    } catch (err) {
+        res.status(404).send('Not Found');
+    }
+}
